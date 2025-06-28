@@ -1,9 +1,10 @@
-import { Box, Button, Input, InputLabel, Typography } from '@mui/material';
+import { Box, Button, Input, InputLabel } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import useAppointments from './hooks/useAppointments';
 
 export default function InputBox({ setIsOpen, business, selectedTime, selectedDate }) {
-    const { createAppointment, isCustomerValid } = useAppointments()
+    const { createAppointment, isCustomerValid } = useAppointments();
+    const [selectedGender, setSelectedGender] = useState(null);
 
     const [customer, setCustomer] = useState({
         businessId: business._id,
@@ -12,6 +13,20 @@ export default function InputBox({ setIsOpen, business, selectedTime, selectedDa
         service: "",
         scheduledAt: `${selectedDate} ${selectedTime}`
     });
+
+    // Update selectedGender automatically if only one gender array is filled
+    useEffect(() => {
+        if (!selectedGender && business?.services?.[0]) {
+            const serviceObj = business.services[0];
+            const filledKeys = ['men', 'women'].filter(
+                (key) => Array.isArray(serviceObj[key]) && serviceObj[key].length > 0
+            );
+            if (filledKeys.length === 1) {
+                setSelectedGender(filledKeys[0]);
+            }
+        }
+    }, [business, selectedGender]);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
 
@@ -21,19 +36,37 @@ export default function InputBox({ setIsOpen, business, selectedTime, selectedDa
         }));
     };
 
+    // Count how many service arrays have data
+    const filledArraysCount = business?.services?.[0]
+        ? ['men', 'women'].reduce((count, key) => {
+            if (Array.isArray(business.services[0][key]) && business.services[0][key].length > 0) {
+                return count + 1;
+            }
+            return count;
+        }, 0)
+        : 0;
+
     return (
         <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
-            <Box sx={{ width: '100%', alignSelf: 'center', mb: 2, mt: 3 }}>
-            </Box>
+            <Box sx={{ width: '100%', alignSelf: 'center', mb: 2, mt: 3 }}></Box>
+
             <Box sx={{ mt: 2 }}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', mb: 3 }}>
-                    <InputLabel sx={{ mb: 0.5, color: "#000", fontSize: { xs: "12px", sm: "13px" }, fontWeight: 400, alignSelf: 'center' }}>
+                    <InputLabel
+                        sx={{
+                            mb: 0.5,
+                            color: "#000",
+                            fontSize: { xs: "12px", sm: "13px" },
+                            fontWeight: 400,
+                            alignSelf: 'center',
+                        }}
+                    >
                         שם מלא
                     </InputLabel>
                     <Input
                         fullWidth
                         name="customerName"
-                        value={customer.name}
+                        value={customer.customerName}
                         onChange={handleChange}
                         sx={{
                             direction: "rtl",
@@ -56,14 +89,22 @@ export default function InputBox({ setIsOpen, business, selectedTime, selectedDa
                 </Box>
 
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', mt: 2 }}>
-                    <InputLabel sx={{ mb: 0.5, color: "#000", fontSize: { xs: "12px", sm: "13px" }, fontWeight: 400, alignSelf: 'center' }}>
+                    <InputLabel
+                        sx={{
+                            mb: 0.5,
+                            color: "#000",
+                            fontSize: { xs: "12px", sm: "13px" },
+                            fontWeight: 400,
+                            alignSelf: 'center',
+                        }}
+                    >
                         טלפון
                     </InputLabel>
                     <Input
                         type="number"
                         fullWidth
                         name="customerPhone"
-                        value={customer.phone}
+                        value={customer.customerPhone}
                         onChange={handleChange}
                         sx={{
                             direction: "rtl",
@@ -95,17 +136,85 @@ export default function InputBox({ setIsOpen, business, selectedTime, selectedDa
                         }}
                     />
                 </Box>
+
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', mt: 3 }}>
-                    <InputLabel sx={{ mb: 0.5, color: "#000", fontSize: { xs: "12px", sm: "13px" }, fontWeight: 400, alignSelf: 'center' }}>
-                        בחר שירות
+                    <InputLabel
+                        sx={{
+                            mb: 0.5,
+                            color: "#000",
+                            fontSize: { xs: "12px", sm: "13px" },
+                            fontWeight: 400,
+                            alignSelf: 'center',
+                        }}
+                    >
+                        {selectedGender
+                            ? "בחר שירות"
+                            : filledArraysCount === 1
+                                ? "בחר שירות"
+                                : "בחר למי התספורת"}
                     </InputLabel>
+
+                    {/* Gender selection buttons, hidden if only one filled array or gender selected */}
+                    <Box
+                        sx={{
+                            display: selectedGender || filledArraysCount === 1 ? "none" : "flex",
+                            gap: 1,
+                        }}
+                    >
+                        <Button
+                            onClick={() => setSelectedGender("men")}
+                            sx={{
+                                px: 1,
+                                py: 0.5,
+                                fontSize: { xs: '14px', sm: '16px' },
+                                fontWeight: 400,
+                                color: '#fff',
+                                backgroundColor: '#222',
+                                borderRadius: 3,
+                                border: 'none',
+                                cursor: 'pointer',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                                transition: '0.3s',
+                                '&:hover': {
+                                    backgroundColor: '#000',
+                                    transform: 'scale(1.03)',
+                                }
+                            }}
+                        >
+                            גבר
+                        </Button>
+                        <Button
+                            onClick={() => setSelectedGender("women")}
+                            sx={{
+                                px: 1,
+                                py: 0.5,
+                                fontSize: { xs: '14px', sm: '16px' },
+                                fontWeight: 400,
+                                color: '#fff',
+                                backgroundColor: '#222',
+                                borderRadius: 3,
+                                border: 'none',
+                                cursor: 'pointer',
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                                transition: '0.3s',
+                                '&:hover': {
+                                    backgroundColor: '#000',
+                                    transform: 'scale(1.03)',
+                                }
+                            }}
+                        >
+                            אישה
+                        </Button>
+                    </Box>
+
+                    {/* Service selection dropdown */}
                     <Box
                         component="select"
                         defaultValue=""
                         name="service"
-                        value={customer.service}
                         onChange={handleChange}
                         sx={{
+                            display: selectedGender || filledArraysCount === 1 ? "auto" : "none",
                             direction: "rtl",
                             color: "#222",
                             fontSize: { xs: "13px", sm: "14px" },
@@ -129,17 +238,20 @@ export default function InputBox({ setIsOpen, business, selectedTime, selectedDa
                         }}
                     >
                         <option value="" disabled hidden>בחר שירות</option>
-                        {business.services.map((service, idx) => (
-                            <option key={idx} value={service}>{service}</option>
-                        ))}
+                        {selectedGender &&
+                            business.services[0][selectedGender]?.map((service, idx) => (
+                                <option key={idx} value={service.type}>
+                                    {service.type}
+                                </option>
+                            ))}
                     </Box>
                 </Box>
 
                 <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mt: 3 }}>
                     <Button
                         onClick={() => {
-                            setIsOpen(false)
-                            createAppointment(customer)
+                            setIsOpen(false);
+                            createAppointment(customer);
                         }}
                         variant="contained"
                         disabled={!isCustomerValid(customer)}
