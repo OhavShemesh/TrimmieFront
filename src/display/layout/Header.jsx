@@ -1,9 +1,12 @@
-﻿import React from 'react';
+﻿import React, { useState } from 'react';
 import { Box, IconButton, Typography } from '@mui/material';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ROUTES from '../router/routesModule';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AdminConnectionInputBox from '../../helpers/AdminConnectionInputBox';
+import LogoutIcon from '@mui/icons-material/Logout';
 
-const Header = ({ navigate }) => {
+const Header = ({ navigate, isAdmin, setIsOpen, isOpen, handleSubmit, loginData, handleChange, isConnected, logout }) => {
   return (
     <Box
       sx={{
@@ -20,13 +23,134 @@ const Header = ({ navigate }) => {
         borderRadius: '0 0 18px 18px',
       }}
     >
+      {isOpen && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(255,255,255,0.7)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: "auto",
+            zIndex: 1300,
+            px: 2,
+            overflow: 'hidden',
+          }}
+          onClick={() => setIsOpen(false)}
+        >
+          <Box
+            sx={{
+              width: { xs: '100%', sm: '80%', md: '60%', lg: '40%', xl: '30%' },
+              maxWidth: '500px',
+              backgroundColor: '#fff',
+              borderRadius: 4,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: 'center',
+              justifyContent: 'center',
+              p: 3,
+              boxShadow: '0 4px 24px rgba(0,0,0,0.13)',
+              minHeight: 400,
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                textAlign: "center",
+                textShadow: "1px 1px 1px rgba(0, 0, 0, 0.5)",
+                fontWeight: 700,
+                fontSize: { xs: "15px", sm: "16px", md: "20px" },
+                color: "#111",
+                mb: 2
+              }}
+            >
+              ברוך הבא אדמין
+            </Typography>
+            <Typography
+              variant="h6"
+              sx={{
+                textAlign: "center",
+                fontWeight: 600,
+                fontSize: { xs: "15px", sm: "16px", md: "17px" },
+                color: "#111",
+                mb: 2
+              }}
+            >
+              הזן פרטים
+            </Typography>
+            <AdminConnectionInputBox isOpen={isOpen} setIsOpen={setIsOpen} handleChange={handleChange} loginData={loginData} handleSubmit={handleSubmit} />
+          </Box>
+        </Box>
+      )}
+
       {/* Empty box for left spacing (if needed) */}
       <Box sx={{ width: '36px' }} />
+      {!isConnected && <Box
+        sx={{
+          position: 'absolute',
+          left: 24,
+          top: 0,
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        <IconButton
+          onClick={() => setIsOpen(true)}
+          sx={{
+            transition: 'background 0.2s',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            '&:hover': {
+              background: '#eaf3ff',
+            },
+          }}
+        >
+          <AccountCircleIcon sx={{ color: '#000', fontSize: '36px', transition: 'color 0.2s', '&:hover': { color: '#666' } }} />
+        </IconButton>
+      </Box>}
+      <Box sx={{ width: '36px' }} />
+      {isConnected && <Box
+        sx={{
+          position: 'absolute',
+          left: 24,
+          top: 0,
+          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        <IconButton
+          onClick={() => {
+            logout()
+            window.location.reload()
+          }}
+          sx={{
+            transition: 'background 0.2s',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            '&:hover': {
+              background: '#eaf3ff',
+            },
+          }}
+        >
+          <LogoutIcon sx={{ color: '#000', fontSize: '36px', transition: 'color 0.2s', '&:hover': { color: '#666' } }} />
+        </IconButton>
+      </Box>}
 
       {/* Centered Logo */}
       <img
         onClick={() => navigate(ROUTES.HOME)}
-        src="/trimtimelogo.png"
+        src={isAdmin ? "/trimtimelogoadmin.png" : "/trimtimelogo.png"}
         alt="TrimTime Logo"
         style={{
           height: '100%',
@@ -63,7 +187,7 @@ const Header = ({ navigate }) => {
           }}
         >
           <Typography sx={{ fontSize: 16, color: '#222', fontWeight: 500 }}>
-            תורים עתידיים
+            {isAdmin ? "תורים עתדיים (אדמין)" : "תורים עתידיים"}
           </Typography>
           <CalendarMonthIcon sx={{ color: '#000', fontSize: '36px', transition: 'color 0.2s', '&:hover': { color: '#666' } }} />
         </IconButton>

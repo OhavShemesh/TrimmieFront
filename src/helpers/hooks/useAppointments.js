@@ -2,9 +2,7 @@ import axios from "axios"
 
 const useAppointments = () => {
     const createAppointment = async (data) => {
-        console.log("data", data);
         const appointment = await axios.post("http://localhost:8181/appointments", data)
-        console.log("appointment", appointment);
 
 
         if (appointment === true) {
