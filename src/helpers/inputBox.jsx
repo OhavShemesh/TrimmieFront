@@ -1,13 +1,15 @@
 import { Box, Button, Input, InputLabel } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import useAppointments from './hooks/useAppointments';
+import { useSnack } from './snack/useSnack';
 
-export default function InputBox({ setIsOpen, business, selectedTime, selectedDate }) {
-    const { createAppointment, isCustomerValid } = useAppointments();
+export default function InputBox({ setIsOpen, business, selectedTime, selectedDate, createAppointment, isCustomerValid }) {
+
     const [selectedGender, setSelectedGender] = useState(null);
+    const showSnack = useSnack()
 
     const [customer, setCustomer] = useState({
-        businessId: business._id,
+        businessId: business.businessId,
         customerName: "",
         customerPhone: "",
         service: "",
@@ -45,6 +47,7 @@ export default function InputBox({ setIsOpen, business, selectedTime, selectedDa
             return count;
         }, 0)
         : 0;
+
 
     return (
         <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -249,9 +252,17 @@ export default function InputBox({ setIsOpen, business, selectedTime, selectedDa
 
                 <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mt: 3 }}>
                     <Button
-                        onClick={() => {
-                            setIsOpen(false);
-                            createAppointment(customer);
+                        onClick={async () => {
+                            const success = await createAppointment(customer);
+                            if (success) {
+                                showSnack("הפגישה נקבעה בהצלחה", "success");
+                                setIsOpen(false);
+                                if (typeof setAppointmentCreated === 'function') {
+                                    setAppointmentCreated(true);
+                                }
+                            } else {
+                                showSnack("אירעה שגיאה בעת קביעת הפגישה", "error");
+                            }
                         }}
                         variant="contained"
                         disabled={!isCustomerValid(customer)}

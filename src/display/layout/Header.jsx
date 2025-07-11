@@ -3,10 +3,12 @@ import { Box, IconButton, Typography } from '@mui/material';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ROUTES from '../router/routesModule';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import AdminConnectionInputBox from '../../helpers/AdminConnectionInputBox';
+import ConnectionInput from '../../helpers/ConnectionInput';
 import LogoutIcon from '@mui/icons-material/Logout';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
-const Header = ({ navigate, isAdmin, setIsOpen, isOpen, handleSubmit, loginData, handleChange, isConnected, logout }) => {
+const Header = ({ navigate, isAdmin, setIsOpen, isOpen, handleSubmit, loginData, handleChange, isConnected, logout, connectedUser }) => {
+
   return (
     <Box
       sx={{
@@ -58,19 +60,7 @@ const Header = ({ navigate, isAdmin, setIsOpen, isOpen, handleSubmit, loginData,
             }}
             onClick={e => e.stopPropagation()}
           >
-            <Typography
-              variant="h6"
-              sx={{
-                textAlign: "center",
-                textShadow: "1px 1px 1px rgba(0, 0, 0, 0.5)",
-                fontWeight: 700,
-                fontSize: { xs: "15px", sm: "16px", md: "20px" },
-                color: "#111",
-                mb: 2
-              }}
-            >
-              ברוך הבא אדמין
-            </Typography>
+
             <Typography
               variant="h6"
               sx={{
@@ -83,7 +73,7 @@ const Header = ({ navigate, isAdmin, setIsOpen, isOpen, handleSubmit, loginData,
             >
               הזן פרטים
             </Typography>
-            <AdminConnectionInputBox isOpen={isOpen} setIsOpen={setIsOpen} handleChange={handleChange} loginData={loginData} handleSubmit={handleSubmit} />
+            <ConnectionInput isOpen={isOpen} setIsOpen={setIsOpen} handleChange={handleChange} loginData={loginData} handleSubmit={handleSubmit} />
           </Box>
         </Box>
       )}
@@ -149,7 +139,10 @@ const Header = ({ navigate, isAdmin, setIsOpen, isOpen, handleSubmit, loginData,
 
       {/* Centered Logo */}
       <img
-        onClick={() => navigate(ROUTES.HOME)}
+        onClick={() => {
+          navigate(ROUTES.HOME)
+          window.location.reload()
+        }}
         src={isAdmin ? "/trimtimelogoadmin.png" : "/trimtimelogo.png"}
         alt="TrimTime Logo"
         style={{
@@ -174,6 +167,22 @@ const Header = ({ navigate, isAdmin, setIsOpen, isOpen, handleSubmit, loginData,
           alignItems: 'center',
         }}
       >
+        {isAdmin && <IconButton
+          onClick={() => {
+            navigate(ROUTES.ADMIN + `/${connectedUser.name}`)
+            window.location.reload()
+          }}
+          sx={{
+            transition: 'background 0.2s',
+            borderRadius: '50%',
+            '&:hover': {
+              background: '#eaf3ff',
+            },
+            mr: 3
+          }}
+        >
+          <AdminPanelSettingsIcon sx={{ color: '#000', fontSize: '36px', transition: 'color 0.2s', '&:hover': { color: '#666' } }} />
+        </IconButton>}
         <IconButton
           sx={{
             transition: 'background 0.2s',

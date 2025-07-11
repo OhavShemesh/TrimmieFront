@@ -2,7 +2,7 @@ import { Box, Button, Input, InputLabel } from '@mui/material';
 import React from 'react';
 import useUsers from './hooks/useUsers';
 
-export default function AdminConnectionInputBox({ setIsOpen, handleSubmit, handleChange, loginData }) {
+export default function ConnectionInput({ setIsOpen, handleSubmit, handleChange, loginData }) {
 
     return (
         <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>

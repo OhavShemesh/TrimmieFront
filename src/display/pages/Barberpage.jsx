@@ -3,7 +3,23 @@ import { Box, Typography } from '@mui/material';
 import InputBox from '../../helpers/InputBox';
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 
-export default function BarberPage({ dates, timeSlots, selectedDate, isOpen, setSelectedDate, setIsOpen, setShowAllDates, showAllDates, name, businesses, setSelectedTime, selectedTime }) {
+export default function BarberPage({
+    dates,
+    selectedDate,
+    isOpen,
+    setSelectedDate,
+    setIsOpen,
+    setShowAllDates,
+    showAllDates,
+    name,
+    businesses,
+    setSelectedTime,
+    selectedTime,
+    timeSlotsByDate,
+    createAppointment,
+    isCustomerValid,
+    setAppointmentCreated, // ✅ add this
+}) {
 
 
     return (
@@ -196,12 +212,12 @@ export default function BarberPage({ dates, timeSlots, selectedDate, isOpen, set
                                             mt: 2,
                                         }}
                                     >
-                                        {timeSlots.map((time, i) => (
+                                        {timeSlotsByDate?.[dates[index].date]?.map((time, i) => (
                                             <Box
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     setIsOpen(true);
-                                                    setSelectedTime(time)
+                                                    setSelectedTime(time);
                                                 }}
                                                 key={i}
                                                 sx={{
@@ -221,14 +237,16 @@ export default function BarberPage({ dates, timeSlots, selectedDate, isOpen, set
                                                         color: '#000',
                                                         border: '2px solid #111',
                                                         transform: 'scale(1.07)',
-                                                    },
-                                                }}
+                                                    }
+                                                }
+                                                }
                                             >
                                                 {time}
                                             </Box>
                                         ))}
                                     </Box>
                                 )}
+
                             </Box>
                         </Box>
                     ))}
@@ -236,58 +254,68 @@ export default function BarberPage({ dates, timeSlots, selectedDate, isOpen, set
             </Box>
 
             {/* 📝 Modal */}
-            {isOpen && (
-                <Box
-                    sx={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        width: '100vw',
-                        height: '100vh',
-                        backgroundColor: 'rgba(255,255,255,0.7)',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        margin: "auto",
-                        zIndex: 1300,
-                        px: 2,
-                        overflow: 'hidden',
-                    }}
-                    onClick={() => setIsOpen(false)}
-                >
+            {
+                isOpen && (
                     <Box
                         sx={{
-                            width: { xs: '100%', sm: '80%', md: '60%', lg: '40%', xl: '30%' },
-                            maxWidth: '500px',
-                            backgroundColor: '#fff',
-                            borderRadius: 4,
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: 'center',
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            width: '100vw',
+                            height: '100vh',
+                            backgroundColor: 'rgba(255,255,255,0.7)',
+                            display: 'flex',
                             justifyContent: 'center',
-                            p: 3,
-                            boxShadow: '0 4px 24px rgba(0,0,0,0.13)',
-                            minHeight: 400,
+                            alignItems: 'center',
+                            margin: "auto",
+                            zIndex: 1300,
+                            px: 2,
+                            overflow: 'hidden',
                         }}
-                        onClick={e => e.stopPropagation()}
+                        onClick={() => setIsOpen(false)}
                     >
-                        <Typography
-                            variant="h6"
+                        <Box
                             sx={{
-                                textAlign: "center",
-                                fontWeight: 600,
-                                fontSize: { xs: "15px", sm: "16px", md: "17px" },
-                                color: "#111",
-                                mb: 2
+                                width: { xs: '100%', sm: '80%', md: '60%', lg: '40%', xl: '30%' },
+                                maxWidth: '500px',
+                                backgroundColor: '#fff',
+                                borderRadius: 4,
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                p: 3,
+                                boxShadow: '0 4px 24px rgba(0,0,0,0.13)',
+                                minHeight: 400,
                             }}
+                            onClick={e => e.stopPropagation()}
                         >
-                            הזן פרטים
-                        </Typography>
+                            <Typography
+                                variant="h6"
+                                sx={{
+                                    textAlign: "center",
+                                    fontWeight: 600,
+                                    fontSize: { xs: "15px", sm: "16px", md: "17px" },
+                                    color: "#111",
+                                    mb: 2
+                                }}
+                            >
+                                הזן פרטים
+                            </Typography>
 
-                        <InputBox selectedDate={dates[selectedDate].date} selectedTime={selectedTime} business={businesses.find(business => business.name == name)} setIsOpen={setIsOpen} onClose={() => setIsOpen(false)} />
+                            <InputBox
+                                selectedDate={dates[selectedDate].date}
+                                selectedTime={selectedTime}
+                                business={businesses.find(business => business.name === name)}
+                                setIsOpen={setIsOpen}
+                                isCustomerValid={isCustomerValid}
+                                createAppointment={createAppointment}
+                                setAppointmentCreated={setAppointmentCreated} // ✅ add this line
+                            />
+                        </Box>
                     </Box>
-                </Box>
-            )}
-        </Box>
+                )
+            }
+        </Box >
     );
 }

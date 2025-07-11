@@ -1,7 +1,7 @@
 const ROUTES = {
     HOME: "/",
     BARBER: "*",
-    ADMIN: "/admin/*"
+    ADMIN: "/admin"
 };
 
 export default ROUTES;

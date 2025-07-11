@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function Main({ children }) {
   return (
-    <Box>
+    <Box sx={{ minHeight: "85vh" }}>
       {children}
     </Box>
   )

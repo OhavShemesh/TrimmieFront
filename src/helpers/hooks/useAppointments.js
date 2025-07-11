@@ -1,16 +1,25 @@
 import axios from "axios"
+import { useState } from "react"
+import useBusinesses from "./useBusinesses"
 
 const useAppointments = () => {
+    const [allAppointments, setAllAppointments] = useState(null)
+    const { removeFromAvailableAppointments } = useBusinesses()
+
     const createAppointment = async (data) => {
-        const appointment = await axios.post("http://localhost:8181/appointments", data)
+        try {
 
+            const [date, time] = data.scheduledAt.split(" ");
+            const appointment = await axios.post("http://localhost:8181/appointments", data);
+            await removeFromAvailableAppointments(data.businessId, date, time);
+            console.log("data", data);
 
-        if (appointment === true) {
-            return true
-        } else {
-            return false
+            return true;
+        } catch (error) {
+            console.error("Failed to create appointment:", error);
+            return false;
         }
-    }
+    };
 
     const isCustomerValid = (customer) => {
         if (!customer) return false;
@@ -29,6 +38,26 @@ const useAppointments = () => {
         return true; // all good
     };
 
-    return { createAppointment, isCustomerValid }
+    const getAllAppointments = async () => {
+        try {
+            const appointments = await axios.get("http://localhost:8181/appointments")
+            setAllAppointments(appointments.data)
+        } catch (error) {
+            console.error("Failed to fetch businesses:", error);
+            return false
+        }
+
+    }
+    const getAllBusinessAppointmentsByBusinessId = async (businessId) => {
+        try {
+            const appointments = await axios.get("http://localhost:8181/appointments/getAllBusinessAppointmentsByBusinessId", { params: { businessId } })
+            return appointments.data
+        } catch (error) {
+            console.error("Failed to fetch businesses:", error);
+            return false
+        }
+    }
+
+    return { createAppointment, isCustomerValid, getAllAppointments, getAllBusinessAppointmentsByBusinessId }
 }
 export default useAppointments

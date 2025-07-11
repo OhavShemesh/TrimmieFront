@@ -8,6 +8,7 @@ const useUsers = () => {
     const navigate = useNavigate()
     const [isConnected, setIsConnected] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [connectedUser, setConnectedUser] = useState(null)
 
     const [loginData, setLoginData] = useState({
         username: "",
@@ -39,13 +40,9 @@ const useUsers = () => {
 
         const token = localStorage.getItem('token');
         if (!token) return false;
-
         try {
-
             const decoded = jwtDecode(token);
-            console.log(decoded);
-
-            return decoded.isAdmin === true
+            return decoded.isAdmin
         } catch (err) {
             console.error("Invalid token", err);
             return false;
@@ -74,7 +71,24 @@ const useUsers = () => {
     const logout = () => {
         localStorage.removeItem('token');
     };
+    useEffect(() => {
+        if (isConnected === true) {
 
+            const getUserDetails = async () => {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    return
+                }
+                const decoded = jwtDecode(token);
+                const user = await axios.get("http://localhost:8181/users/getUserById", { params: { id: decoded.userId } });
+                setConnectedUser(user.data)
+
+            }
+            getUserDetails()
+
+        }
+
+    }, [isConnected])
 
 
     return {
@@ -85,7 +99,8 @@ const useUsers = () => {
         isUserConnected,
         isConnected,
         isAdmin,
-        logout
+        logout,
+        connectedUser
     };
 };
 

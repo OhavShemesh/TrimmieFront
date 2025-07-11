@@ -1,13 +1,16 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import useUsers from "./useUsers";
 
 const useBusinesses = () => {
     const [businesses, setBusinesses] = useState([]);
+    const [business, setBusiness] = useState()
+    const { connectedUser } = useUsers()
 
     useEffect(() => {
         const getAllBusinesses = async () => {
             try {
-                const response = await axios.get("http://localhost:8181/businesses"); // note '/api/'
+                const response = await axios.get("http://localhost:8181/businesses");
                 const data = response.data;
                 setBusinesses(data);
             } catch (error) {
@@ -16,9 +19,49 @@ const useBusinesses = () => {
         };
         getAllBusinesses()
     }, [])
+    useEffect(() => {
+        const getBusinessByBusinessId = async () => {
+            try {
+                const response = await axios.get("http://localhost:8181/businesses/getBusinessByBusinessId", { params: { businessId: connectedUser?.businessId } });
+                const data = response.data
+                setBusiness(data)
+
+            } catch (error) {
+                console.error("Failed to fetch business:", error);
+
+            }
+        }
+        if (connectedUser?.isAdmin === true) {
+            getBusinessByBusinessId()
+        }
+    }, [connectedUser])
+
+    const updateAvailableAppointments = async (availableSlots) => {
+        try {
+            console.log("availableSlots", availableSlots);
+
+            const response = await axios.patch("http://localhost:8181/businesses/updateAvailableAppointmentsByBusinessId", {
+                availableAppointments: availableSlots,
+                businessId: connectedUser?.businessId
+            });
 
 
-    return { setBusinesses, businesses }
+
+        } catch (error) {
+            console.error("Failed to update available appointments:", error);
+
+        }
+    }
+    const removeFromAvailableAppointments = async (businessId, date, time) => {
+        try {
+            const response = await axios.patch("http://localhost:8181/businesses/removeFromAvailableAppointments", { businessId: businessId, date: date, time: time })
+        } catch (error) {
+            console.error("Failed to update available appointments:", error);
+
+        }
+    }
+
+    return { setBusinesses, businesses, business, updateAvailableAppointments, removeFromAvailableAppointments }
 
 }
 

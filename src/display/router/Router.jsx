@@ -9,7 +9,7 @@ export default function Router() {
     <Routes>
       <Route path={ROUTES.HOME} element={<HomePageManager />} />
       <Route path={ROUTES.BARBER} element={<BarberPageManager />} />
-      <Route path={ROUTES.ADMIN} element={<BusinessBoardManager />} />
+      <Route path={`${ROUTES.ADMIN}/:id`} element={<BusinessBoardManager />} />
     </Routes>
   );
 }

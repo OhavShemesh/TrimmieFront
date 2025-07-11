@@ -10,7 +10,7 @@ export default function Layout({ children }) {
     const navigate = useNavigate()
     const [isOpen, setIsOpen] = useState()
 
-    const { loginData, handleChange, login, isConnected, isAdmin, logout } = useUsers();
+    const { loginData, handleChange, login, isConnected, isAdmin, logout, connectedUser } = useUsers();
 
     const handleSubmit = async () => {
         const success = await login();
@@ -27,7 +27,7 @@ export default function Layout({ children }) {
 
     return (
         <>
-            <Header navigate={navigate} isOpen={isOpen} setIsOpen={setIsOpen} loginData={loginData} handleChange={handleChange} handleSubmit={handleSubmit} isConnected={isConnected} isAdmin={isAdmin} logout={logout} />
+            <Header navigate={navigate} isOpen={isOpen} setIsOpen={setIsOpen} loginData={loginData} handleChange={handleChange} handleSubmit={handleSubmit} isConnected={isConnected} isAdmin={isAdmin} logout={logout} connectedUser={connectedUser} />
             <Main>{children}</Main>
             <Footer />
         </>
