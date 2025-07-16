@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Header from './Header'
 import Main from './Main'
 import Footer from './Footer'
@@ -9,6 +9,7 @@ export default function Layout({ children }) {
 
     const navigate = useNavigate()
     const [isOpen, setIsOpen] = useState()
+    const [isOverlayOpen, setIsOverlayOpen] = useState(false)
 
     const { loginData, handleChange, login, isConnected, isAdmin, logout, connectedUser } = useUsers();
 
@@ -24,10 +25,9 @@ export default function Layout({ children }) {
 
 
 
-
     return (
         <>
-            <Header navigate={navigate} isOpen={isOpen} setIsOpen={setIsOpen} loginData={loginData} handleChange={handleChange} handleSubmit={handleSubmit} isConnected={isConnected} isAdmin={isAdmin} logout={logout} connectedUser={connectedUser} />
+            <Header navigate={navigate} isOpen={isOpen} setIsOpen={setIsOpen} loginData={loginData} handleChange={handleChange} handleSubmit={handleSubmit} isConnected={isConnected} isAdmin={isAdmin} logout={logout} connectedUser={connectedUser} isOverlayOpen={isOverlayOpen} setIsOverlayOpen={setIsOverlayOpen} />
             <Main>{children}</Main>
             <Footer />
         </>

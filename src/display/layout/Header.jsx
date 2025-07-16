@@ -6,8 +6,9 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ConnectionInput from '../../helpers/ConnectionInput';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import FutureAppointmentsManager from '../../helpers/pages/managers/FutureAppointmentsManager';
 
-const Header = ({ navigate, isAdmin, setIsOpen, isOpen, handleSubmit, loginData, handleChange, isConnected, logout, connectedUser }) => {
+const Header = ({ navigate, isAdmin, setIsOpen, isOpen, handleSubmit, loginData, handleChange, isConnected, logout, connectedUser, isOverlayOpen, setIsOverlayOpen }) => {
 
   return (
     <Box
@@ -184,6 +185,7 @@ const Header = ({ navigate, isAdmin, setIsOpen, isOpen, handleSubmit, loginData,
           <AdminPanelSettingsIcon sx={{ color: '#000', fontSize: '36px', transition: 'color 0.2s', '&:hover': { color: '#666' } }} />
         </IconButton>}
         <IconButton
+          onClick={() => setIsOverlayOpen(true)}
           sx={{
             transition: 'background 0.2s',
             borderRadius: '50%',
@@ -201,6 +203,24 @@ const Header = ({ navigate, isAdmin, setIsOpen, isOpen, handleSubmit, loginData,
           <CalendarMonthIcon sx={{ color: '#000', fontSize: '36px', transition: 'color 0.2s', '&:hover': { color: '#666' } }} />
         </IconButton>
       </Box>
+      {isOverlayOpen &&
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 1300,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <FutureAppointmentsManager setIsOverlayOpen={setIsOverlayOpen} />
+        </Box>
+      }
     </Box>
   );
 };

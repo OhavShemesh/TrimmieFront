@@ -1,20 +1,38 @@
-import React, { useEffect, useState } from 'react'
-import HomePage from '../HomePage'
+import React, { useEffect, useMemo, useState } from 'react';
 import BarberPage from '../Barberpage';
 import { useParams } from 'react-router-dom';
 import useBusinesses from '../../../helpers/hooks/useBusinesses';
 import useAppointments from '../../../helpers/hooks/useAppointments';
+import CryptoJS from "crypto-js";
 
 export default function BarberPageManager() {
-    const { business, businesses } = useBusinesses()
+    const { businesses, getBusinessByName } = useBusinesses();
+    const [business, setBusiness] = useState(null)
     const [timeSlotsByDate, setTimeSlotsByDate] = useState({});
-    const [isOpen, setIsOpen] = useState(false)
-    const [selectedDate, setSelectedDate] = useState(null);
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState("");
     const [selectedTime, setSelectedTime] = useState(null);
     const [showAllDates, setShowAllDates] = useState(false);
     const { "*": name } = useParams();
     const { createAppointment, isCustomerValid } = useAppointments();
-    const [appointmentCreated, setAppointmentCreated] = useState(false)
+    const [appointmentCreated, setAppointmentCreated] = useState(false);
+
+    const secretKey = import.meta.env.VITE_CUSTOMER_SECRET_KEY;
+
+    useEffect(() => {
+        const fetchBusiness = async () => {
+            try {
+
+                const businessByName = await getBusinessByName(name);
+                setBusiness(businessByName);
+            } catch (error) {
+                console.error("Failed to fetch business by name:", error);
+            }
+        };
+
+        fetchBusiness();
+    }, [name]);
+
 
     const getHebrewDates = () => {
         const hebrewDays = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
@@ -27,7 +45,7 @@ export default function BarberPageManager() {
             newDate.setDate(today.getDate() + i);
             const dayOfWeek = newDate.getDay();
 
-            if (dayOfWeek !== 1 && dayOfWeek !== 6) { // skip Monday and Saturday
+            if (dayOfWeek !== 1 && dayOfWeek !== 6) {
                 const day = String(newDate.getDate()).padStart(2, "0");
                 const month = String(newDate.getMonth() + 1).padStart(2, "0");
                 const year = newDate.getFullYear();
@@ -41,7 +59,7 @@ export default function BarberPageManager() {
         return daysArray;
     };
 
-    const dates = getHebrewDates();
+    const dates = useMemo(() => getHebrewDates(), []);
 
     const generateTimeSlots = (openingHour, closingHour) => {
         const [startH, startM = 0] = openingHour.split(":").map(Number);
@@ -75,20 +93,28 @@ export default function BarberPageManager() {
         });
 
         setTimeSlotsByDate(slotsMap);
-        setAppointmentCreated(false)
-    }, [business, dates, appointmentCreated]);
+        setAppointmentCreated(false);
+    }, [business, dates]);
 
-    // ✅ Updated handler
     const handleCreateAppointment = async (customer) => {
         const success = await createAppointment(customer);
         if (success) {
-            // Remove the selected time from the correct date
             setTimeSlotsByDate(prev => {
                 const updated = { ...prev };
                 const times = updated[selectedDate] || [];
                 updated[selectedDate] = times.filter(time => time !== selectedTime);
                 return updated;
             });
+
+
+            if (customer.customerPhone) {
+                try {
+                    localStorage.setItem("customerPhone", customer.customerPhone);
+                } catch (err) {
+                    console.error("Failed to encrypt phone:", err);
+                }
+            }
+
             setAppointmentCreated(true);
         }
         return success;
@@ -109,9 +135,9 @@ export default function BarberPageManager() {
             selectedTime={selectedTime}
             setSelectedTime={setSelectedTime}
             timeSlotsByDate={timeSlotsByDate}
-            createAppointment={handleCreateAppointment} // ✅ use new handler
+            createAppointment={handleCreateAppointment}
             isCustomerValid={isCustomerValid}
-            setAppointmentCreated={setAppointmentCreated} // ✅ pass this down
+            setAppointmentCreated={setAppointmentCreated}
         />
-    )
+    );
 }

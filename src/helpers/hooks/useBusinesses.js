@@ -38,7 +38,6 @@ const useBusinesses = () => {
 
     const updateAvailableAppointments = async (availableSlots) => {
         try {
-            console.log("availableSlots", availableSlots);
 
             const response = await axios.patch("http://localhost:8181/businesses/updateAvailableAppointmentsByBusinessId", {
                 availableAppointments: availableSlots,
@@ -55,13 +54,36 @@ const useBusinesses = () => {
     const removeFromAvailableAppointments = async (businessId, date, time) => {
         try {
             const response = await axios.patch("http://localhost:8181/businesses/removeFromAvailableAppointments", { businessId: businessId, date: date, time: time })
+
         } catch (error) {
             console.error("Failed to update available appointments:", error);
 
         }
     }
+    const getBusinessByName = async (name) => {
+        try {
+            const response = await axios.get("http://localhost:8181/businesses/getBusinessByName", { params: { name: name } })
+            return response.data
+        } catch (error) {
+            console.error("Failed to fetch business by name :", error);
 
-    return { setBusinesses, businesses, business, updateAvailableAppointments, removeFromAvailableAppointments }
+        }
+    }
+    const getBusinessByBusinessId = async (businessId) => {
+        try {
+            const response = await axios.get("http://localhost:8181/businesses/getBusinessByBusinessId", { params: { businessId: businessId } });
+            const data = response.data
+            return data
+
+
+        } catch (error) {
+            console.error("Failed to fetch business:", error);
+
+        }
+    }
+
+
+    return { setBusinesses, businesses, business, updateAvailableAppointments, removeFromAvailableAppointments, getBusinessByName, getBusinessByBusinessId }
 
 }
 

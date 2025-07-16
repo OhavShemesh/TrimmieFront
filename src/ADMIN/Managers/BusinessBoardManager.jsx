@@ -207,7 +207,6 @@ export default function BusinessBoardManager() {
                 date,
                 times: times || [],
             });
-            console.log("Available appointments saved successfully.");
         } catch (err) {
             console.error("Failed to update available appointments", err);
         }

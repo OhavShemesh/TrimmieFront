@@ -12,7 +12,6 @@ const useAppointments = () => {
             const [date, time] = data.scheduledAt.split(" ");
             const appointment = await axios.post("http://localhost:8181/appointments", data);
             await removeFromAvailableAppointments(data.businessId, date, time);
-            console.log("data", data);
 
             return true;
         } catch (error) {
@@ -57,7 +56,16 @@ const useAppointments = () => {
             return false
         }
     }
+    const getAllAppointmentsByPhoneNumber = async (phoneNumber) => {
+        try {
+            const response = await axios.get("http://localhost:8181/appointments/getAllAppointmentsByPhoneNumber", { params: { phoneNumber: phoneNumber } })
+            return response.data
+        } catch (error) {
+            console.error("Failed to fetch appointments by phone number:", error);
+            return false
 
-    return { createAppointment, isCustomerValid, getAllAppointments, getAllBusinessAppointmentsByBusinessId }
+        }
+    }
+    return { createAppointment, isCustomerValid, getAllAppointments, getAllBusinessAppointmentsByBusinessId, getAllAppointmentsByPhoneNumber }
 }
 export default useAppointments
