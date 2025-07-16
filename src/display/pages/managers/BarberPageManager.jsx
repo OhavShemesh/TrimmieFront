@@ -62,18 +62,28 @@ export default function BarberPageManager() {
     const dates = useMemo(() => getHebrewDates(), []);
 
     const generateTimeSlots = (openingHour, closingHour) => {
+        console.log('Input:', { openingHour, closingHour }); // Debug log
+
         const [startH, startM = 0] = openingHour.split(":").map(Number);
         const [endH, endM = 0] = closingHour.split(":").map(Number);
 
+        console.log('Parsed:', { startH, startM, endH, endM }); // Debug log
+
         const slots = [];
-        for (let hour = startH; hour < endH; hour++) {
-            for (let min = 0; min < 60; min += 10) {
-                slots.push(`${hour.toString().padStart(2, "0")}:${min.toString().padStart(2, "0")}`);
-            }
+
+        // Create start and end times in minutes for easier comparison
+        const startTimeInMinutes = startH * 60 + startM;
+        const endTimeInMinutes = endH * 60 + endM;
+
+        // Generate slots every 10 minutes from start to end (inclusive)
+        for (let timeInMinutes = startTimeInMinutes; timeInMinutes <= endTimeInMinutes; timeInMinutes += 10) {
+            const hours = Math.floor(timeInMinutes / 60);
+            const minutes = timeInMinutes % 60;
+            const timeSlot = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+            slots.push(timeSlot);
         }
-        if (endM > 0) {
-            slots.push(`${endH.toString().padStart(2, "0")}:00`);
-        }
+
+        console.log('Generated slots:', slots); // Debug log
         return slots;
     };
 
@@ -99,13 +109,15 @@ export default function BarberPageManager() {
     const handleCreateAppointment = async (customer) => {
         const success = await createAppointment(customer);
         if (success) {
+            // ✅ FIX: Get the actual date string from the dates array using selectedDate index
+            const actualDate = dates[selectedDate]?.date;
+
             setTimeSlotsByDate(prev => {
                 const updated = { ...prev };
-                const times = updated[selectedDate] || [];
-                updated[selectedDate] = times.filter(time => time !== selectedTime);
+                const times = updated[actualDate] || [];
+                updated[actualDate] = times.filter(time => time !== selectedTime);
                 return updated;
             });
-
 
             if (customer.customerPhone) {
                 try {

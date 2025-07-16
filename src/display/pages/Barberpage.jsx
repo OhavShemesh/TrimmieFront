@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Chip } from '@mui/material';
 import InputBox from '../../helpers/InputBox';
 import LocationPinIcon from '@mui/icons-material/LocationPin';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
 export default function BarberPage({
     dates,
@@ -18,9 +20,8 @@ export default function BarberPage({
     timeSlotsByDate,
     createAppointment,
     isCustomerValid,
-    setAppointmentCreated, // ✅ add this
+    setAppointmentCreated,
 }) {
-
 
     return (
         <Box
@@ -35,7 +36,7 @@ export default function BarberPage({
                 overflow: 'hidden',
             }}
         >
-            {/* Background pattern */}
+            {/* Background pattern - same as homepage */}
             <Box
                 sx={{
                     position: 'absolute',
@@ -50,17 +51,69 @@ export default function BarberPage({
                     opacity: 0.4,
                 }}
             />
-            <Box sx={{ position: 'relative', mb: 5 }}>
-                <Typography sx={{ fontWeight: "bold", letterSpacing: "1px", textAlign: "center", mb: 1 }} variant='h3'>{name}</Typography>
-                <Typography sx={{ fontWeight: "bold", letterSpacing: "1px", textAlign: "center", opacity: 0.7 }} variant='h6'>
+
+            {/* Header Section with modern styling */}
+            <Box
+                sx={{
+                    position: 'relative',
+                    mb: 6,
+                    textAlign: 'center',
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    backdropFilter: 'blur(20px)',
+                    borderRadius: '24px',
+                    p: 4,
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
+                    animation: 'slideInDown 0.6s ease-out',
+                    '@keyframes slideInDown': {
+                        '0%': {
+                            opacity: 0,
+                            transform: 'translateY(-30px)'
+                        },
+                        '100%': {
+                            opacity: 1,
+                            transform: 'translateY(0)'
+                        }
+                    }
+                }}
+            >
+                <Typography
+                    sx={{
+                        fontWeight: 800,
+                        letterSpacing: "2px",
+                        textAlign: "center",
+                        mb: 2,
+                        background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                        backgroundClip: 'text',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                    }}
+                    variant='h3'
+                >
+                    ✂️ {name}
+                </Typography>
+                <Typography
+                    sx={{
+                        fontWeight: 500,
+                        letterSpacing: "1px",
+                        textAlign: "center",
+                        color: '#666',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 1
+                    }}
+                    variant='h6'
+                >
+                    <LocationPinIcon sx={{ color: '#667eea' }} />
                     {
                         businesses.find(business => business.name === name)
                             ? `${businesses.find(business => business.name === name).address.streetAddress}, ${businesses.find(business => business.name === name).address.city}`
                             : "Address not found"
                     }
-                    <LocationPinIcon />
                 </Typography>
             </Box>
+
             {/* Overlay for closing date selection */}
             {selectedDate !== null && !isOpen && (
                 <Box
@@ -78,86 +131,129 @@ export default function BarberPage({
             )}
 
             {/* Content container */}
-            <Box sx={{ position: 'relative', width: '100%', maxWidth: 900, display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 11 }}>
+            <Box sx={{ position: 'relative', width: '100%', maxWidth: 1000, display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 11 }}>
 
-
-                {/* 💈 Pricing Board */}
+                {/* 💈 Pricing Board - Enhanced */}
                 <Box
                     sx={{
                         width: '100%',
-                        maxWidth: 500,
-                        backgroundColor: '#fff',
-                        borderRadius: 3,
-                        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-                        p: { xs: 2, sm: 3 },
-                        mb: 4,
+                        maxWidth: 600,
+                        background: 'rgba(255, 255, 255, 0.95)',
+                        backdropFilter: 'blur(20px)',
+                        borderRadius: '24px',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
+                        p: { xs: 3, sm: 4 },
+                        mb: 5,
                         textAlign: 'right',
                         direction: 'rtl',
+                        animation: 'slideInUp 0.6s ease-out 0.2s both',
+                        '@keyframes slideInUp': {
+                            '0%': {
+                                opacity: 0,
+                                transform: 'translateY(30px)'
+                            },
+                            '100%': {
+                                opacity: 1,
+                                transform: 'translateY(0)'
+                            }
+                        }
                     }}
                 >
                     <Typography
-                        variant="h6"
+                        variant="h5"
                         sx={{
                             fontWeight: 700,
-                            fontSize: { xs: '18px', sm: '20px' },
-                            mb: 2,
+                            fontSize: { xs: '20px', sm: '24px' },
+                            mb: 3,
                             textAlign: 'center',
-                            color: '#111',
+                            color: '#333',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 1
                         }}
                     >
-                        מחירי שירותים
+                        💰 מחירי שירותים
                     </Typography>
 
                     {[
-                        { service: 'תספורת רגילה', price: '₪60' },
-                        { service: 'עיצוב זקן', price: '₪40' },
-                        { service: 'תספורת ילדים', price: '₪50' },
-                        { service: 'צבע / החלקה', price: '₪150+' },
+                        { service: 'תספורת רגילה', price: '₪60', icon: '✂️' },
+                        { service: 'עיצוב זקן', price: '₪40', icon: '🧔' },
+                        { service: 'תספורת ילדים', price: '₪50', icon: '👶' },
+                        { service: 'צבע / החלקה', price: '₪150+', icon: '🎨' },
                     ].map((item, index) => (
-                        <Box key={index} sx={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            borderBottom: index !== 3 ? '1px solid #eee' : 'none',
-                            py: 1
-                        }}>
-                            <Typography sx={{ fontWeight: 500 }}>{item.service}</Typography>
-                            <Typography sx={{ fontWeight: 600 }}>{item.price}</Typography>
+                        <Box
+                            key={index}
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                borderBottom: index !== 3 ? '1px solid rgba(0,0,0,0.1)' : 'none',
+                                py: 2,
+                                px: 1,
+                                transition: 'all 0.3s ease',
+                                borderRadius: '12px',
+                                mb: index !== 3 ? 1 : 0,
+                                '&:hover': {
+                                    backgroundColor: 'rgba(102, 126, 234, 0.05)',
+                                    transform: 'translateX(-5px)'
+                                }
+                            }}
+                        >
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                <Typography sx={{ fontSize: '20px' }}>{item.icon}</Typography>
+                                <Typography sx={{ fontWeight: 500, fontSize: '16px' }}>{item.service}</Typography>
+                            </Box>
+                            <Typography sx={{ fontWeight: 700, fontSize: '18px', color: '#667eea' }}>{item.price}</Typography>
                         </Box>
                     ))}
                 </Box>
-                <Box sx={{ mb: 3 }}>
+
+                {/* Book Appointment Button - Enhanced */}
+                <Box sx={{ mb: 4 }}>
                     <Box
                         component="button"
                         onClick={() => setShowAllDates(prev => !prev)}
                         sx={{
-                            px: 4,
-                            py: 1.5,
-                            fontSize: { xs: '16px', sm: '18px' },
-                            fontWeight: 600,
+                            px: 6,
+                            py: 2,
+                            fontSize: { xs: '18px', sm: '20px' },
+                            fontWeight: 700,
                             color: '#fff',
-                            backgroundColor: '#222',
-                            borderRadius: 3,
+                            background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                            borderRadius: '50px',
                             border: 'none',
                             cursor: 'pointer',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                            transition: '0.3s',
+                            boxShadow: '0 10px 30px rgba(102, 126, 234, 0.3)',
+                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 2,
                             '&:hover': {
-                                backgroundColor: '#000',
-                                transform: 'scale(1.03)',
+                                transform: 'translateY(-3px) scale(1.05)',
+                                boxShadow: '0 15px 40px rgba(102, 126, 234, 0.4)',
+                            },
+                            '&:active': {
+                                transform: 'translateY(-1px) scale(1.02)',
                             }
                         }}
                     >
-                        קבע תור
+                        <CalendarTodayIcon />
+                        {showAllDates ? 'סגור תאריכים' : 'קבע תור'}
                     </Box>
                 </Box>
 
-                {/* 📅 Date List Fold-down */}
+                {/* 📅 Date List Fold-down - Enhanced */}
                 <Box
                     sx={{
                         overflow: 'hidden',
                         maxHeight: showAllDates ? '3000px' : 0,
                         transition: 'max-height 0.8s ease',
-                        width: '110%',
+                        width: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
                     }}
                 >
                     {dates.map((item, index) => (
@@ -165,157 +261,215 @@ export default function BarberPage({
                             key={index}
                             onClick={() => setSelectedDate(selectedDate === index ? null : index)}
                             sx={{
-                                backgroundColor: '#fff',
-                                color: '#222',
-                                borderRadius: '18px',
-                                py: { xs: 2, sm: 2.5 },
-                                px: { xs: 2.5, sm: 4 },
-                                m: { xs: 2, sm: 2.5 },
+                                background: selectedDate === index
+                                    ? 'linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1))'
+                                    : 'rgba(255, 255, 255, 0.95)',
+                                backdropFilter: 'blur(20px)',
+                                color: '#333',
+                                borderRadius: '20px',
+                                py: { xs: 3, sm: 3.5 },
+                                px: { xs: 3, sm: 4 },
+                                mb: 2,
                                 width: '100%',
-                                maxWidth: 900,
+                                maxWidth: '900px',
                                 textAlign: 'center',
                                 fontFamily: '"Poppins", sans-serif',
                                 fontSize: { xs: '18px', sm: '20px', md: '22px' },
                                 fontWeight: 600,
-                                boxShadow: selectedDate === index ? '0 6px 24px rgba(0,0,0,0.13)' : '0 2px 8px rgba(0,0,0,0.10)',
-                                border: selectedDate === index ? '2px solid #111' : '1.5px solid #bbb',
-                                transition: 'all 0.3s cubic-bezier(.4,2,.6,1)',
+                                boxShadow: selectedDate === index
+                                    ? '0 15px 40px rgba(102, 126, 234, 0.2)'
+                                    : '0 8px 25px rgba(0,0,0,0.08)',
+                                border: selectedDate === index
+                                    ? '2px solid #667eea'
+                                    : '1px solid rgba(255, 255, 255, 0.3)',
+                                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                                 cursor: 'pointer',
-                                mb: 2,
                                 position: 'relative',
+                                animation: `slideInUp 0.6s ease-out ${index * 0.1}s both`,
                                 '&:hover': {
-                                    backgroundColor: '#f5f5f5',
-                                    boxShadow: '0 8px 32px rgba(0,0,0,0.13)',
-                                    border: '2px solid #111',
-                                    transform: 'scale(1.004)',
+                                    backgroundColor: 'rgba(102, 126, 234, 0.05)',
+                                    boxShadow: '0 12px 35px rgba(102, 126, 234, 0.15)',
+                                    border: '2px solid #667eea',
+                                    transform: 'translateY(-2px)',
                                 },
                             }}
                         >
-                            <span style={{ color: '#111', fontWeight: 700 }}>{item.day}</span> - {item.date}
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
+                                <CalendarTodayIcon sx={{ color: '#667eea' }} />
+                                <span style={{ color: '#333', fontWeight: 700 }}>{item.day}</span>
+                                <span style={{ color: '#666' }}>-</span>
+                                <span style={{ color: '#333' }}>{item.date}</span>
+                            </Box>
 
                             <Box
                                 sx={{
-                                    maxHeight: selectedDate === index ? '500px' : '0px',
+                                    maxHeight: selectedDate === index ? 'fit-content' : '0px',
+                                    opacity: selectedDate === index ? 1 : 0,
                                     overflow: 'hidden',
-                                    transition: 'max-height 0.4s cubic-bezier(.4,2,.6,1)',
-                                    mt: selectedDate === index ? 2 : 0,
+                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    mt: selectedDate === index ? 3 : 0,
+                                    transform: selectedDate === index ? 'translateY(0)' : 'translateY(-10px)',
                                 }}
                             >
-                                {selectedDate === index && (
-                                    <Box
-                                        sx={{
-                                            display: 'grid',
-                                            gridTemplateColumns: { xs: 'repeat(3, 1fr)', sm: 'repeat(5, 1fr)', md: 'repeat(6, 1fr)' },
-                                            gap: { xs: 1.5, sm: 2.5 },
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            mt: 2,
-                                        }}
-                                    >
-                                        {timeSlotsByDate?.[dates[index].date]?.map((time, i) => (
-                                            <Box
+                                <Box
+                                    sx={{
+                                        display: 'grid',
+                                        gridTemplateColumns: { xs: 'repeat(3, 1fr)', sm: 'repeat(4, 1fr)', md: 'repeat(5, 1fr)' },
+                                        gap: { xs: 2, sm: 2.5 },
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        mt: 2,
+                                        pb: 2, // Add padding bottom for better spacing
+                                    }}
+                                >
+                                    {(() => {
+                                        const slots = timeSlotsByDate?.[dates[index].date] || [];
+                                        console.log(`Displaying slots for ${dates[index].date}:`, slots); // Debug log
+                                        return slots.map((time, i) => (
+                                            <Chip
+                                                key={i}
+                                                label={time}
+                                                icon={<AccessTimeIcon />}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     setIsOpen(true);
                                                     setSelectedTime(time);
                                                 }}
-                                                key={i}
                                                 sx={{
-                                                    backgroundColor: '#ededed',
-                                                    color: '#111',
-                                                    borderRadius: '10px',
-                                                    py: 1.2,
-                                                    px: 0,
+                                                    background: 'linear-gradient(45deg, #f8f9fa, #e9ecef)',
+                                                    color: '#333',
+                                                    borderRadius: '15px',
+                                                    py: { xs: 1.5, sm: 2 }, // Responsive padding
+                                                    px: 1,
                                                     cursor: 'pointer',
-                                                    transition: '0.2s',
-                                                    fontSize: { xs: '15px', sm: '16px' },
+                                                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                    fontSize: { xs: '13px', sm: '14px', md: '15px' }, // Responsive font size
                                                     fontWeight: 600,
-                                                    border: '1.5px solid #bbb',
-                                                    boxShadow: '0 1px 4px rgba(0,0,0,0.07)',
+                                                    border: '1px solid rgba(102, 126, 234, 0.2)',
+                                                    boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
+                                                    height: { xs: '40px', sm: '48px' }, // Responsive height
+                                                    minWidth: { xs: '60px', sm: '70px' }, // Ensure minimum width
+                                                    opacity: selectedDate === index ? 1 : 0,
+                                                    transform: selectedDate === index ? 'scale(1)' : 'scale(0.95)',
+                                                    animation: selectedDate === index ? `chipSlideIn 0.2s ease-out ${i * 0.02}s both` : 'none',
+                                                    '@keyframes chipSlideIn': {
+                                                        '0%': {
+                                                            opacity: 0,
+                                                            transform: 'translateY(10px) scale(0.95)'
+                                                        },
+                                                        '100%': {
+                                                            opacity: 1,
+                                                            transform: 'translateY(0) scale(1)'
+                                                        }
+                                                    },
                                                     '&:hover': {
-                                                        backgroundColor: '#e0e0e0',
-                                                        color: '#000',
-                                                        border: '2px solid #111',
-                                                        transform: 'scale(1.07)',
+                                                        background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                                                        color: '#fff',
+                                                        transform: 'translateY(-2px) scale(1.05)',
+                                                        boxShadow: '0 8px 25px rgba(102, 126, 234, 0.3)',
+                                                        '& .MuiChip-icon': {
+                                                            color: '#fff'
+                                                        }
+                                                    },
+                                                    '& .MuiChip-icon': {
+                                                        color: '#667eea',
+                                                        fontSize: { xs: '16px', sm: '18px' } // Responsive icon size
                                                     }
-                                                }
-                                                }
-                                            >
-                                                {time}
-                                            </Box>
-                                        ))}
-                                    </Box>
-                                )}
-
+                                                }}
+                                            />
+                                        ));
+                                    })()}
+                                </Box>
                             </Box>
                         </Box>
                     ))}
                 </Box>
             </Box>
 
-            {/* 📝 Modal */}
-            {
-                isOpen && (
+            {/* 📝 Modal - Enhanced */}
+            {isOpen && (
+                <Box
+                    sx={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100vw',
+                        height: '100vh',
+                        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                        backdropFilter: 'blur(8px)',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        margin: "auto",
+                        zIndex: 1300,
+                        px: 2,
+                        overflow: 'hidden',
+                        animation: 'fadeIn 0.3s ease-out',
+                        '@keyframes fadeIn': {
+                            '0%': { opacity: 0 },
+                            '100%': { opacity: 1 }
+                        }
+                    }}
+                    onClick={() => setIsOpen(false)}
+                >
                     <Box
                         sx={{
-                            position: 'fixed',
-                            top: 0,
-                            left: 0,
-                            width: '100vw',
-                            height: '100vh',
-                            backgroundColor: 'rgba(255,255,255,0.7)',
-                            display: 'flex',
-                            justifyContent: 'center',
+                            width: { xs: '95%', sm: '80%', md: '60%', lg: '40%', xl: '35%' },
+                            maxWidth: '500px',
+                            background: 'rgba(255, 255, 255, 0.98)',
+                            backdropFilter: 'blur(20px)',
+                            borderRadius: '24px',
+                            border: '1px solid rgba(255, 255, 255, 0.3)',
+                            display: "flex",
+                            flexDirection: "column",
                             alignItems: 'center',
-                            margin: "auto",
-                            zIndex: 1300,
-                            px: 2,
-                            overflow: 'hidden',
+                            justifyContent: 'center',
+                            p: 4,
+                            boxShadow: '0 25px 60px rgba(0, 0, 0, 0.2)',
+                            minHeight: 450,
+                            animation: 'slideInUp 0.4s ease-out',
+                            '@keyframes slideInUp': {
+                                '0%': {
+                                    opacity: 0,
+                                    transform: 'translateY(30px) scale(0.95)'
+                                },
+                                '100%': {
+                                    opacity: 1,
+                                    transform: 'translateY(0) scale(1)'
+                                }
+                            }
                         }}
-                        onClick={() => setIsOpen(false)}
+                        onClick={e => e.stopPropagation()}
                     >
-                        <Box
+                        <Typography
+                            variant="h5"
                             sx={{
-                                width: { xs: '100%', sm: '80%', md: '60%', lg: '40%', xl: '30%' },
-                                maxWidth: '500px',
-                                backgroundColor: '#fff',
-                                borderRadius: 4,
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                p: 3,
-                                boxShadow: '0 4px 24px rgba(0,0,0,0.13)',
-                                minHeight: 400,
+                                textAlign: "center",
+                                fontWeight: 700,
+                                fontSize: { xs: "18px", sm: "20px", md: "22px" },
+                                color: "#333",
+                                mb: 3,
+                                background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                                backgroundClip: 'text',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
                             }}
-                            onClick={e => e.stopPropagation()}
                         >
-                            <Typography
-                                variant="h6"
-                                sx={{
-                                    textAlign: "center",
-                                    fontWeight: 600,
-                                    fontSize: { xs: "15px", sm: "16px", md: "17px" },
-                                    color: "#111",
-                                    mb: 2
-                                }}
-                            >
-                                הזן פרטים
-                            </Typography>
+                            📝 הזן פרטים
+                        </Typography>
 
-                            <InputBox
-                                selectedDate={dates[selectedDate].date}
-                                selectedTime={selectedTime}
-                                business={businesses.find(business => business.name === name)}
-                                setIsOpen={setIsOpen}
-                                isCustomerValid={isCustomerValid}
-                                createAppointment={createAppointment}
-                                setAppointmentCreated={setAppointmentCreated} // ✅ add this line
-                            />
-                        </Box>
+                        <InputBox
+                            selectedDate={dates[selectedDate].date}
+                            selectedTime={selectedTime}
+                            business={businesses.find(business => business.name === name)}
+                            setIsOpen={setIsOpen}
+                            isCustomerValid={isCustomerValid}
+                            createAppointment={createAppointment}
+                            setAppointmentCreated={setAppointmentCreated}
+                        />
                     </Box>
-                )
-            }
-        </Box >
+                </Box>
+            )}
+        </Box>
     );
 }

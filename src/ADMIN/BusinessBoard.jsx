@@ -40,6 +40,20 @@ export default function BusinessBoard({
     availableSlots
 }) {
 
+    // ✅ Get appointment times for the selected working hours date
+    const getAppointmentTimesForDate = (date) => {
+        // Filter appointments for the specific date and extract times
+        return filteredAppointments
+            .filter(appointment => appointment.scheduledAt.split(" ")[0] === date)
+            .map(appointment => appointment.scheduledAt.split(" ")[1]);
+    };
+
+    const appointmentTimes = getAppointmentTimesForDate(workingHoursSelectedDate);
+
+    // ✅ Check if a time slot has an appointment
+    const hasAppointment = (timeSlot) => {
+        return appointmentTimes.includes(timeSlot);
+    };
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -109,7 +123,22 @@ export default function BusinessBoard({
                                                     <Draggable key={slot} draggableId={slot} index={index}>
                                                         {(provided) => (
                                                             <Box ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                                                                <Chip label={slot} sx={{ fontSize: 18, height: 48, padding: "0 16px", cursor: "grab", userSelect: "none" }} />
+                                                                <Chip
+                                                                    label={slot}
+                                                                    sx={{
+                                                                        fontSize: 18,
+                                                                        height: 48,
+                                                                        padding: "0 16px",
+                                                                        cursor: "grab",
+                                                                        userSelect: "none",
+                                                                        // ✅ Yellow if has appointment, grey if not
+                                                                        backgroundColor: hasAppointment(slot) ? "#ffeb3b" : "#e0e0e0",
+                                                                        color: hasAppointment(slot) ? "#000" : "#666",
+                                                                        "&:hover": {
+                                                                            backgroundColor: hasAppointment(slot) ? "#fdd835" : "#d5d5d5"
+                                                                        }
+                                                                    }}
+                                                                />
                                                             </Box>
                                                         )}
                                                     </Draggable>
